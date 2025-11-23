@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Clone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Roboto", "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont;
+      background-color: #f9f9f9;
+      color: #0f0f0f;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+
+    .header {
+      height: 56px;
+      background-color: #ffffff;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-left,
+    .header-center,
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .menu-btn:hover {
+      background-color: #f2f2f2;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-left: 8px;
+    }
+
+    .logo svg {
+      width: 30px;
+      height: 30px;
+      margin-right: 4px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+    }
+
+    .logo-region {
+      font-size: 10px;
+      margin-left: 2px;
+    }
+
+    .header-center {
+      flex: 0 1 600px;
+      justify-content: center;
+    }
+
+    .search-box {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .search-input {
+      flex: 1;
+      height: 40px;
+      border: 1px solid #ccc;
+      border-radius: 40px 0 0 40px;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #1c62b9;
+    }
+
+    .search-btn {
+      width: 64px;
+      height: 40px;
+      border: 1px solid #ccc;
+      border-left: none;
+      border-radius: 0 40px 40px 0;
+      background-color: #f8f8f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .search-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    .mic-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .header-right>div {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .header-right>div:hover {
+      background-color: #f2f2f2;
+    }
+
+    .avatar {
+      background-color: #0f8cff;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+
+    .layout {
+      display: flex;
+      height: calc(100vh - 56px);
+    }
+
+
+    .sidebar {
+      width: 72px;
+      background-color: #ffffff;
+
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sidebar-item {
+      width: 64px;
+      height: 74px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 10px;
+      margin: 2px 0;
+      font-size: 11px;
+    }
+
+    .sidebar-item:hover {
+      background-color: #f2f2f2;
+    }
+
+    .sidebar-item svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-item.active {
+      background-color: #f2f2f2;
+      font-weight: 600;
+    }
+
+
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 24px;
+    }
+
+
+
+    .chip {
+      padding: 6px 13px;
+      border-radius: 16px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      background-color: #f2f2f2;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .chips-row {
+      margin-bottom: 24px;
+    }
+
+    .chip:hover {
+      background-color: #e8e8e8;
+    }
+
+    .chip.active {
+      background-color: #0f0f0f;
+      color: #fff;
+      border-color: #0f0f0f;
+    }
+
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 40px;
+    }
+
+    .video-card {
+      cursor: pointer;
+    }
+
+    .thumbnail {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background-color: #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .thumbnail img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-time {
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .video-info {
+      display: flex;
+      margin-top: 8px;
+    }
+
+    .channel-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #ccc;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .video-text-title {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .video-text-meta {
+      font-size: 12px;
+      color: #606060;
+      line-height: 1.4;
+    }
+
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .layout {
+        height: auto;
+      }
+
+      .header-center {
+        flex: 1;
+      }
+
+      .search-box {
+        max-width: none;
+      }
+
+      .chips-row {
+        position: static;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-left">
+      <div class="menu-btn" title="主選單">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path>
+        </svg>
+      </div>
+      <a href="#" class="logo">
+        <svg viewBox="0 0 24 24">
+          <path fill="#ff0000"
+            d="M21.8 8.001s-.2-1.4-.8-2c-.7-.8-1.5-.8-1.9-.9-2.7-.2-6.7-.2-6.7-.2h-.1s-4 0-6.7.2c-.4 0-1.2.1-1.9.9-.6.6-.8 2-.8 2S3 9.8 3 11.6v1.7c0 1.8.2 3.6.2 3.6s.2 1.4.8 2c.7.8 1.7.8 2.1.9 1.5.1 6.5.2 6.5.2s4 0 6.7-.2c.4 0 1.2-.1 1.9-.9.6-.6.8-2 .8-2s.2-1.8.2-3.6v-1.7c0-1.8-.2-3.6-.2-3.6z">
+          </path>
+          <path fill="#fff" d="M10 15.5V8.5l5 3.5-5 3.5z"></path>
+        </svg>
+        <span class="logo-text">YouTube</span>
+        <span class="logo-region">TW</span>
+      </a>
+    </div>
+
+    <div class="header-center">
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="搜尋">
+
+
+        <button class="search-btn" title="搜尋">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path
+              d="M15.5 14h-.8l-.3-.3A6.49 6.49 0 0 0 16 9.5a6.5 6.5 0 1 0-6.5 6.5 6.49 6.49 0 0 0 4.2-1.6l.3.3h.8l5 5 1.5-1.5-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="mic-btn" title="語音搜尋">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"></path>
+          <path
+            d="M17 11a1 1 0 0 0-2 0 3 3 0 0 1-6 0 1 1 0 0 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-3.1A5 5 0 0 0 17 11z">
+          </path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div title="建立">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path>
+        </svg>
+      </div>
+
+      <div title="通知">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path
+            d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.1-1.6-5.6-4.5-6.3V4a1.5 1.5 0 0 0-3 0v.7C7.6 5.4 6 7.9 6 11v5l-2 2v1h16v-1l-2-2z" />
+        </svg>
+      </div>
+
+      <div class="avatar" title="R">R</div>
+    </div>
+  </header>
+
+
+  <div class="layout">
+
+    <nav class="sidebar">
+      <div class="sidebar-item active">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+        </svg>
+        <span>首頁</span>
+      </div>
+      <div class="sidebar-item">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M10 3 6 9l4 2-4 6 8-2 4-6-4-2 4-6-8 2z"></path>
+        </svg>
+        <span>Shorts</span>
+      </div>
+      <div class="sidebar-item">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M10 8l6 4-6 4z"></path>
+          <path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" fill="none"
+            stroke="currentColor"></path>
+        </svg>
+        <span>訂閱內容</span>
+      </div>
+      <div class="sidebar-item">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M4 6h16v2H4zm0 4h10v2H4zm0 4h8v2H4z"></path>
+        </svg>
+        <span>媒體庫</span>
+      </div>
+    </nav>
+
+
+    <main class="main">
+
+      <div class="chips-row">
+        <button class="chip active">全部</button>
+        <button class="chip">音樂</button>
+        <button class="chip">遊戲</button>
+        <button class="chip">直播中</button>
+        <button class="chip">新聞</button>
+        <button class="chip">動漫</button>
+        <button class="chip">最近上傳</button>
+        <button class="chip">觀看紀錄</button>
+      </div>
+
+
+      <section class="video-grid">
+
+        <article class="video-card">
+          <div class="thumbnail">
+
+            <img src="./img/大埔01.jpg" alt="">
+            <span class="video-time">11:43</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video1">
+            <div>
+              <div class="video-text-title">
+                包手師傅炒的才好吃？大埔為什麼能穩坐平價鐵板燒龍頭？【懂商業看商周】Ep.111
+              </div>
+              <div class="video-text-meta">
+                商業周刊<br>
+                觀看次數：11萬次・1 天前
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/02.jpg" alt="">
+            <span class="video-time">10:34</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video2">
+            <div>
+              <div class="video-text-title">
+                我的腳痛風了🔥 完全站不起來，2025最絕望的一天…
+              </div>
+              <div class="video-text-meta">
+                阿啾小劇場<br>
+                觀看次數：30萬次・5 天前
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/03.jpg" alt="">
+            <span class="video-time">22:51</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video3">
+            <div>
+              <div class="video-text-title">
+                寶可夢（第一季）第1集｜寶可夢就決定是你了！
+              </div>
+              <div class="video-text-meta">
+                寶可夢 官方<br>
+                觀看次數：59萬次・7 個月前
+              </div>
+            </div>
+          </div>
+        </article>
+
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/04.jpg" alt="">
+            <span class="video-time">18:20</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video4">
+            <div>
+              <div class="video-text-title">
+                Japanese R&B｜一聽就愛上的日文歌・快樂就是這麼簡單🎶｜J-POP｜休閒歌單｜放鬆 / Chill #放鬆音樂 #relaxingmusic #chill #japanesemusic
+              </div>
+              <div class="video-text-meta">
+                7Tunes-n2e<br>
+                觀看次數：24萬次 1 個月前
+              </div>
+            </div>
+          </div>
+        </article>
+
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/05.jpg" alt="">
+            <span class="video-time">18:20</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video5">
+            <div>
+              <div class="video-text-title">
+                最浪費金錢的八種東西｜不要再買了【金錢 財富 省錢 存錢 收入 理財 財務 經濟 極簡】
+              </div>
+              <div class="video-text-meta">
+                關於錢的那些事兒<br>
+                觀看次數：601次 21 小時前
+              </div>
+            </div>
+          </div>
+        </article>
+
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/06.jpg" alt="">
+            <span class="video-time">18:20</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video6">
+            <div>
+              <div class="video-text-title">
+                台灣被稱行人地獄，根本騎樓害的？
+              </div>
+              <div class="video-text-meta">
+                PanSci 泛科學<br>
+                觀看次數：29萬次 4 天前
+              </div>
+            </div>
+          </div>
+        </article>
+
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/7.jpg" alt="">
+            <span class="video-time">18:20</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video7">
+            <div>
+              <div class="video-text-title">
+                3種爛房不要碰!中古屋殺價竟看XX! 識破漏水屋!【小宇宙大爆發】
+              </div>
+              <div class="video-text-meta">
+                MOMOTV綜合台<br>
+                觀看次數：301,560次・1 週前
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/08.jpg" alt="">
+            <span class="video-time">18:20</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video8">
+            <div>
+              <div class="video-text-title">
+                上班時間的「新竹縣」閒人。一日客家廚房水腳體驗！客家人重男輕女？竹北適合退休？擂茶以前吃鹹的？《哈哈台地區的街訪》EP76【哈哈台】
+              </div>
+              <div class="video-text-meta">
+                HahaTai 哈哈台<br>
+                觀看次數：25萬次 2 天前
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="video-card">
+          <div class="thumbnail">
+            <img src="./img/09.jpg" alt="">
+            <span class="video-time">18:20</span>
+          </div>
+          <div class="video-info">
+            <img class="channel-avatar" src="https://i.pravatar.cc/150?u=video9">
+            <div>
+              <div class="video-text-title">
+                #蝦皮 店到店比萊爾富還多！#酷澎 低價搶市佔後下一步？網購物流大戰，老牌超商如何應對？【8分鐘看懂天下】Ep.60
+              </div>
+              <div class="video-text-meta">
+                天下雜誌 video<br>
+                觀看次數：6.5萬次 2 天前
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </section>
+    </main>
+  </div>
+</body>
+
+</html>
